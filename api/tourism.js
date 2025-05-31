@@ -17,9 +17,18 @@ module.exports = async function handler(req, res) {
         success: true,
         data: { 
           region, 
-          attractions: [{title: '샘플 관광지', category: '문화관광지'}],
-          events: [{title: '샘플 행사', location: region}],
-          message: 'API 키 설정 필요' 
+          attractions: [
+            {title: `${region} 대표 관광지`, category: '문화관광지'},
+            {title: `${region} 자연공원`, category: '자연관광지'},
+            {title: `${region} 역사유적`, category: '역사관광지'}
+          ],
+          events: [
+            {title: `${region} 문화축제`, location: region},
+            {title: `${region} 음식축제`, location: region}
+          ],
+          attractionCount: 3,
+          eventCount: 2,
+          message: 'API 키 설정 필요 - 샘플 데이터' 
         }
       });
     }
@@ -56,6 +65,14 @@ module.exports = async function handler(req, res) {
       image: item.firstimage || null
     }));
 
+    // 기본값 설정
+    if (attractions.length === 0) {
+      attractions.push(
+        {title: `${region} 대표 관광지`, category: '문화관광지'},
+        {title: `${region} 자연공원`, category: '자연관광지'}
+      );
+    }
+
     // 샘플 이벤트 데이터
     const events = [
       { title: `${region} 문화축제`, location: region, date: '2025-06-01' },
@@ -68,9 +85,9 @@ module.exports = async function handler(req, res) {
         region,
         attractions,
         events,
-        attractionCount: attractions.length,
-        eventCount: events.length,
-        message: '🏛️ 실시간 관광 정보',
+        attractionCount: attractions.length, // 이것이 중요!
+        eventCount: events.length, // 이것이 중요!
+        message: '🏛️ 관광 정보 (일부 샘플 데이터 포함)',
         time: new Date().toLocaleString('ko-KR')
       }
     });
@@ -85,8 +102,10 @@ module.exports = async function handler(req, res) {
           { title: '대체 관광지 2', category: '자연관광지' }
         ],
         events: [
-          { title: '대체 행사 1', location: region }
+          { title: '대체 행사 1', location: req.query.region || '서울' }
         ],
+        attractionCount: 2, // 명시적으로 숫자 설정
+        eventCount: 1, // 명시적으로 숫자 설정
         message: `⚠️ 대체 데이터: ${error.message}`,
         time: new Date().toLocaleString('ko-KR')
       }
