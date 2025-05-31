@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>힐링K 2025</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 600px; margin: 50px auto; padding: 20px; background: #f0f8ff; }
+        .container { background: white; padding: 30px; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
+        h1 { text-align: center; color: #2c3e50; }
+        button { background: #3498db; color: white; padding: 12px 20px; border: none; border-radius: 5px; cursor: pointer; margin: 10px; }
+        button:hover { background: #2980b9; }
+        .result { background: #ecf0f1; padding: 15px; border-radius: 8px; margin-top: 15px; }
+        .weather { font-size: 18px; margin: 10px 0; }
+        .temp { font-size: 24px; color: #e74c3c; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🏔️ 힐링K 2025</h1>
+        <button onclick="getWeather('서울')">서울 날씨</button>
+        <button onclick="getWeather('부산')">부산 날씨</button>
+        <button onclick="getWeather('제주')">제주 날씨</button>
+        
+        <div id="result" class="result" style="display:none;"></div>
+    </div>
+
+    <script>
+        async function getWeather(region) {
+            const resultDiv = document.getElementById('result');
+            resultDiv.style.display = 'block';
+            resultDiv.innerHTML = '날씨 정보 로딩 중...';
+            
+            try {
+                const response = await fetch(`/api/weather?region=${region}`);
+                const data = await response.json();
+                
+                if (data.success) {
+                    const w = data.data;
+                    resultDiv.innerHTML = `
+                        <div class="weather">
+                            <h3>🌤️ ${w.region} 날씨</h3>
+                            <div class="temp">🌡️ ${w.temperature}°C</div>
+                            <div>☁️ ${w.sky}</div>
+                            <div>💧 ${w.precipitation}</div>
+                            <div>📡 ${w.message}</div>
+                            <div>🕐 ${w.time}</div>
+                        </div>
+                    `;
+                } else {
+                    resultDiv.innerHTML = '오류: ' + JSON.stringify(data);
+                }
+            } catch (error) {
+                resultDiv.innerHTML = '네트워크 오류: ' + error.message;
+            }
+        }
+        
+        // 페이지 로드 시 서울 날씨 자동 조회
+        window.onload = () => getWeather('서울');
+    </script>
+</body>
+</html>
